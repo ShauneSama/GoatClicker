@@ -578,27 +578,53 @@
             position: absolute;
             width: 60px; /* Size of the bonus icon */
             height: 60px;
-            background-color: #fcd34d; /* Yellow background */
+            background-color: transparent;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 2.5rem; /* Icon size */
             cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            color: #FFD700; /* Gold color for the star */
+            /* Enhanced glow effect */
+            filter: drop-shadow(0 0 5px rgba(255,215,0,0.8)) drop-shadow(0 0 15px rgba(255,215,0,0.6)) drop-shadow(0 0 25px rgba(255,215,0,0.4));
             animation: floatUpDown 2s ease-in-out infinite alternate; /* Floating animation */
             z-index: 30; /* Above goat, below UI panels */
-            transition: transform 0.1s ease-out;
+            transition: transform 0.1s ease-out, filter 0.3s ease;
+        }
+
+        .bonus-item svg {
+            width: 100%;
+            height: 100%;
         }
 
         .bonus-item:hover {
             transform: scale(1.1);
+            filter: drop-shadow(0 0 8px rgba(255,215,0,0.9)) drop-shadow(0 0 20px rgba(255,215,0,0.7)) drop-shadow(0 0 30px rgba(255,215,0,0.5));
         }
 
         @keyframes floatUpDown {
             0% { transform: translateY(0px); }
             100% { transform: translateY(-15px); }
         }
+
+        /* Bonus particle styles */
+        .bonus-particle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: #FFD700; /* Yellow color */
+            border-radius: 50%;
+            pointer-events: none;
+            animation: bonusParticleFade 1s ease-out forwards;
+            box-shadow: 0 0 3px #FFD700, 0 0 8px #FFD700; /* Enhanced glow for particles */
+            z-index: 29; /* Slightly below the bonus item */
+        }
+
+        @keyframes bonusParticleFade {
+            0% { transform: scale(0.5) translate(0,0); opacity: 1; }
+            100% { transform: scale(1) translate(var(--b-tx), var(--b-ty)); opacity: 0; }
+        }
+
 
         /* Active bonus indicator styles */
         #activeBonusIndicator {
@@ -607,16 +633,24 @@
             left: 1rem;
             background-color: rgba(0,0,0,0.7);
             color: white;
-            padding: 0.5rem 1rem;
+            padding: 0.3rem 0.6rem; /* Reduced padding */
             border-radius: 8px;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
+            gap: 0.3rem; /* Reduced gap */
+            font-size: 0.75rem; /* Reduced font size */
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
             z-index: 1000;
+        }
+        /* Style for the icon within the active bonus indicator */
+        #activeBonusIcon {
+            width: 1rem; /* Equivalent to w-4 */
+            height: 1rem; /* Equivalent to h-4 */
+            display: flex; /* Ensure SVG fills the space */
+            align-items: center;
+            justify-content: center;
         }
         #activeBonusIndicator.active {
             opacity: 1;
@@ -948,8 +982,8 @@
 
         // Bonus types definition
         const bonusTypes = [
-            { id: 'clickBoost', icon: '⚡', duration: 10, multiplier: 2, type: 'gpc' }, // Doubles GPC for 10 seconds
-            { id: 'incomeBoost', icon: '💰', duration: 10, multiplier: 2, type: 'gps' }  // Doubles GPS for 10 seconds
+            { id: 'clickBoost', icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-full h-full"><path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354l-4.644 2.757c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.007z" clip-rule="evenodd" /></svg>`, duration: 10, multiplier: 2, type: 'gpc' }, // Doubles GPC for 10 seconds
+            { id: 'incomeBoost', icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-full h-full"><path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354l-4.644 2.757c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.007z" clip-rule="evenodd" /></svg>`, duration: 10, multiplier: 2, type: 'gps' }  // Doubles GPS for 10 seconds
         ];
 
         /**
@@ -1217,6 +1251,9 @@
 
             gameAreaElement.appendChild(bonusElement);
 
+            // Create particles around the bonus item when it spawns
+            createBonusParticles(randomX, randomY);
+
             // Remove bonus if not clicked after a certain time (e.g., 8 seconds)
             const bonusTimeout = setTimeout(() => {
                 if (bonusElement.parentNode) {
@@ -1226,6 +1263,37 @@
 
             // Add click listener to activate bonus
             bonusElement.addEventListener('click', () => activateBonus(bonusType, bonusElement, bonusTimeout));
+        }
+
+        /**
+         * Creates and animates multiple particles around a spawned bonus item.
+         * @param {number} centerX - X coordinate of the bonus item.
+         * @param {number} centerY - Y coordinate of the bonus item.
+         */
+        function createBonusParticles(centerX, centerY) {
+            for (let i = 0; i < 10; i++) { // Create 10 particles
+                const particle = document.createElement('div');
+                particle.className = 'bonus-particle';
+
+                particle.style.left = `${centerX}px`;
+                particle.style.top = `${centerY}px`;
+
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 30 + 10; // Distance from 10px to 40px
+                const translateX = Math.cos(angle) * distance;
+                const translateY = Math.sin(angle) * distance;
+
+                particle.style.setProperty('--b-tx', `${translateX}px`);
+                particle.style.setProperty('--b-ty', `${translateY}px`);
+
+                gameAreaElement.appendChild(particle);
+
+                particle.addEventListener('animationend', () => {
+                    if (particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
+                    }
+                });
+            }
         }
 
         /**
@@ -1300,7 +1368,9 @@
         function updateActiveBonusIndicator() {
             if (activeBonus) {
                 activeBonusIndicator.classList.add('active');
-                activeBonusIcon.textContent = activeBonus.icon;
+                activeBonusIcon.innerHTML = activeBonus.icon; // Use innerHTML for SVG
+                activeBonusIcon.style.color = '#FFD700'; // Ensure the icon is yellow
+                activeBonusIcon.style.filter = 'drop-shadow(0 0 5px #FFD700)'; // Add a subtle glow to the indicator icon
                 activeBonusTimer.textContent = `${activeBonus.remainingTime}s`;
             } else {
                 hideActiveBonusIndicator();
