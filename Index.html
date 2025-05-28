@@ -758,7 +758,10 @@
                     goat_1000: { name: "Grand Berger", description: "Posséder 1000 chèvres." },
                     upgrade_1: { name: "Premier Achat", description: "Acheter votre première amélioration." },
                     upgrade_all_tier1: { name: "Bien Équipé", description: "Acheter toutes les améliorations de base (Pâturage Basique & Jeune Berger)." },
-                    gps_10: { name: "Auto-Suffisant", description: "Atteindre 10 chèvres par seconde." }
+                    gps_10: { name: "Auto-Suffisant", description: "Atteindre 10 chèvres par seconde." },
+                    goat_5000: { name: "Éleveur de Chèvres", description: "Posséder 5000 chèvres." },
+                    total_gpc_500: { name: "Maître Clickeur", description: "Atteindre 500 chèvres par clic." },
+                    total_gps_500: { name: "Empire Caprin", description: "Atteindre 500 chèvres par seconde." }
                 }
             },
             en: {
@@ -805,7 +808,10 @@
                     goat_1000: { name: "Great Shepherd", description: "Own 1000 goats." },
                     upgrade_1: { name: "First Purchase", description: "Buy your first upgrade." },
                     upgrade_all_tier1: { name: "Well Equipped", description: "Buy all basic upgrades (Basic Pasture & Young Shepherd)." },
-                    gps_10: { name: "Self-Sufficient", description: "Reach 10 goats per second." }
+                    gps_10: { name: "Self-Sufficient", description: "Reach 10 goats per second." },
+                    goat_5000: { name: "Goat Breeder", description: "Own 5000 goats." },
+                    total_gpc_500: { name: "Click Master", description: "Reach 500 goats per click." },
+                    total_gps_500: { name: "Goat Empire", description: "Reach 500 goats per second." }
                 }
             }
         };
@@ -831,7 +837,10 @@
             { id: "goat_1000", name: "Grand Berger", description: "Posséder 1000 chèvres.", unlocked: false, condition: () => goatCount >= 1000, icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>` },
             { id: "upgrade_1", name: "Premier Achat", description: "Acheter votre première amélioration.", unlocked: false, condition: () => upgradesPurchasedCount >= 1, icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg>` },
             { id: "upgrade_all_tier1", name: "Bien Équipé", description: "Acheter toutes les améliorations de base (Pâturage Basique & Jeune Berger).", unlocked: false, condition: () => upgrades.find(u=>u.id==="meilleurPat_1").purchased > 0 && upgrades.find(u=>u.id==="bergerAuto_1").purchased > 0, icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068M15.75 21H8.25A2.25 2.25 0 016 18.75V5.25A2.25 2.25 0 018.25 3h7.5A2.25 2.25 0 0118 5.25v8.25A2.25 2.25 0 0115.75 21z" /></svg>`},
-            { id: "gps_10", name: "Auto-Suffisant", description: "Atteindre 10 chèvres par seconde.", unlocked: false, condition: () => goatsPerSecond >= 10, icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M9.348 14.652a3.75 3.75 0 010-5.304m5.304 0a3.75 3.75 0 010 5.304m-7.425 2.122a6.75 6.75 0 010-9.546m9.546 0a6.75 6.75 0 010 9.546M5.106 18.894c-3.808-3.808-3.808-9.98 0-13.788m13.788 0c3.808 3.808 3.808 9.98 0 13.788M12 12h.008v.008H12V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>`}
+            { id: "gps_10", name: "Auto-Suffisant", description: "Atteindre 10 chèvres par seconde.", unlocked: false, condition: () => goatsPerSecond >= 10, icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M9.348 14.652a3.75 3.75 0 010-5.304m5.304 0a3.75 3.75 0 010 5.304m-7.425 2.122a6.75 6.75 0 010-9.546m9.546 0a6.75 6.75 0 010 9.546M5.106 18.894c-3.808-3.808-3.808-9.98 0-13.788m13.788 0c3.808 3.808 3.808 9.98 0 13.788M12 12h.008v.008H12V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>`},
+            { id: "goat_5000", name: "Éleveur de Chèvres", description: "Posséder 5000 chèvres.", unlocked: false, condition: () => goatCount >= 5000, icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6.75a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 18.375a.75.75 0 00.044.868 20.25 20.25 0 003.14 2.348c.553.337 1.28.625 2.052.823a11.25 11.25 0 005.626 0c.772-.198 1.499-.486 2.052-.823a20.25 20.25 0 003.14-2.348.75.75 0 00.044-.868C18.847 16.03 16.71 15 12 15s-6.847 1.03-7.499 3.375z" /></svg>`},
+            { id: "total_gpc_500", name: "Maître Clickeur", description: "Atteindre 500 chèvres par clic.", unlocked: false, condition: () => goatsPerClick >= 500, icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5" /></svg>`},
+            { id: "total_gps_500", name: "Empire Caprin", description: "Atteindre 500 chèvres par seconde.", unlocked: false, condition: () => goatsPerSecond >= 500, icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" /></svg>`}
         ];
 
         // Bonus types definition
