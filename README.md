@@ -1,2 +1,0 @@
-# GoatClicker
-GameGoatClicker
