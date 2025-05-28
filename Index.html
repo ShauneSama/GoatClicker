@@ -111,9 +111,6 @@
         body.dark-theme .achievement-item.unlocked {
             background-color: #2d3748; /* Darker background for unlocked achievements */
         }
-        body.dark-theme .achievement-item.unlocked .achievement-details h4 {
-            color: #68d391; /* Lighter green for unlocked text */
-        }
         body.dark-theme .achievement-item.unlocked .achievement-icon {
             border-color: #38a169; /* Darker green border for unlocked icons */
             background-color: #2f855a; /* Darker green background for unlocked icons */
@@ -140,6 +137,93 @@
         }
         body.dark-theme .grass-foreground {
             background-image: url("data:image/svg+xml,%3Csvg width='100' height='50' viewBox='0 0 100 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 50 Q 12.5 25, 25 50 T 50 50 T 75 50 T 100 50 L 100 50 L 0 50 Z' fill='%232F855A'/%3E%3Cpath d='M0 50 Q 10 30, 20 50 T 40 50 T 60 50 T 80 50 T 100 50 L 100 50 L 0 50 Z' fill='%231C4532' opacity='0.6'/%3E%3C/svg%3E");
+        }
+
+        /* Neon theme styles */
+        body.neon-theme {
+            background-color: #0d0d0d; /* Dark background */
+            color: #00ff00; /* Bright green neon */
+        }
+        body.neon-theme #gameArea {
+            background: linear-gradient(to bottom, #003333 0%, #006666 70%, #009999 100%); /* Teal neon gradient */
+        }
+        body.neon-theme .ui-panel,
+        body.neon-theme .side-menu,
+        body.neon-theme .modal-content {
+            background-color: #1a1a1a; /* Slightly lighter dark for panels */
+            box-shadow: 0 0 20px rgba(0,255,255,0.5); /* Cyan glow */
+        }
+        body.neon-theme .stat-card {
+            background-color: #004d4d; /* Dark teal */
+            border: 1px solid #00ffff; /* Cyan border */
+            box-shadow: 0 0 10px rgba(0,255,255,0.3); /* Cyan glow */
+        }
+        body.neon-theme .stat-card h3 {
+            color: #99ffff; /* Lighter cyan */
+        }
+        body.neon-theme .stat-card p {
+            color: #00ffcc; /* Bright green-cyan */
+        }
+        body.neon-theme .upgrade-button {
+            background-color: #006666; /* Teal background */
+            color: #00ffcc;
+            box-shadow: 0 0 10px rgba(0,255,255,0.3);
+        }
+        body.neon-theme .upgrade-button:disabled {
+            background-color: #003333;
+            color: #009999;
+            box-shadow: none;
+        }
+        body.neon-theme .upgrade-button.bg-blue-500 {
+            background-color: #00cc66; /* Green neon for available */
+        }
+        body.neon-theme .upgrade-button.bg-green-600 {
+            background-color: #009933; /* Darker green neon for maxed */
+        }
+        body.neon-theme .achievement-item {
+            border-bottom-color: #004d4d; /* Dark teal separator */
+        }
+        body.neon-theme .achievement-item h4 {
+            color: #00ffcc;
+        }
+        body.neon-theme .achievement-item p {
+            color: #99ffff;
+        }
+        body.neon-theme .achievement-item.unlocked {
+            background-color: #003333; /* Dark teal background */
+        }
+        body.neon-theme .achievement-item.unlocked .achievement-details h4 {
+            color: #00ff00; /* Bright green */
+        }
+        body.neon-theme .achievement-item.unlocked .achievement-icon {
+            border-color: #00ffcc; /* Green-cyan border */
+            background-color: #006666; /* Teal background */
+        }
+        body.neon-theme .modal-content h3,
+        body.neon-theme .modal-content p {
+            color: #00ffcc;
+        }
+        body.neon-theme .toast-notification {
+            background-color: #00cc66; /* Green neon for toast */
+            color: white;
+            box-shadow: 0 0 15px rgba(0,255,102,0.7);
+        }
+        body.neon-theme .floating-text {
+            color: #00ffcc; /* Bright green-cyan */
+            text-shadow: 0px 0px 10px rgba(0,255,204,0.8);
+        }
+        body.neon-theme .upgrade-effect-star {
+            color: #ff00ff; /* Magenta neon for star effect */
+            text-shadow: 0px 0px 10px rgba(255,0,255,0.8);
+        }
+        body.neon-theme .cloud {
+            fill: #00cccc; /* Cyan clouds in neon theme */
+            opacity: 0.8;
+            filter: drop-shadow(0 0 5px rgba(0,204,204,0.7));
+        }
+        body.neon-theme .grass-foreground {
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='50' viewBox='0 0 100 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 50 Q 12.5 25, 25 50 T 50 50 T 75 50 T 100 50 L 100 50 L 0 50 Z' fill='%23006666'/%3E%3Cpath d='M0 50 Q 10 30, 20 50 T 40 50 T 60 50 T 80 50 T 100 50 L 100 50 L 0 50 Z' fill='%23009999' opacity='0.6'/%3E%3C/svg%3E");
+            filter: drop-shadow(0 0 8px rgba(0,255,255,0.5));
         }
 
 
@@ -678,6 +762,10 @@
         let upgradesPurchasedCount = 0; // Counter for total upgrades purchased
         let currentLanguage = 'fr'; // Default language
         let currentTheme = 'dark'; // Default theme changed to dark
+        let lastNormalTheme = 'dark'; // Stores the last theme that was not Neon
+
+        let themeClickCount = 0; // Counter for rapid clicks on theme button
+        let themeClickTimer = null; // Timer to reset theme click count
 
         // Bonus variables
         let activeBonus = null; // Stores the currently active bonus
@@ -719,6 +807,7 @@
                 achievementsButton: "Succès",
                 languageButton: "Langue",
                 themeButton: "Thème", // New translation
+                neonThemeButtonText: "Thème Néon", // New Neon theme translation
                 resetButton: "Réinitialiser",
                 goatsStatTitle: "Chèvres",
                 gpcStatTitle: "/ Clic",
@@ -735,6 +824,7 @@
                 toastAchievementUnlocked: "🏆 Succès débloqué : ",
                 toastGameSaved: "Partie sauvegardée !",
                 toastGameReset: "Partie réinitialisée !",
+                toastNeonThemeUnlocked: "✨ Thème Néon débloqué !", // New toast message
                 upgradesMenuButtonText: "Améliorations", // Kept for translation consistency, though button removed
                 settingsMenuButtonText: "Menu", // Changed from Paramètres to Menu
                 settingsTitle: "Paramètres",
@@ -769,6 +859,7 @@
                 achievementsButton: "Achievements",
                 languageButton: "Language",
                 themeButton: "Theme", // New translation
+                neonThemeButtonText: "Neon Theme", // New Neon theme translation
                 resetButton: "Reset",
                 goatsStatTitle: "Goats",
                 gpcStatTitle: "/ Click",
@@ -785,6 +876,7 @@
                 toastAchievementUnlocked: "🏆 Achievement Unlocked: ",
                 toastGameSaved: "Game saved!",
                 toastGameReset: "Game reset!",
+                toastNeonThemeUnlocked: "✨ Neon Theme Unlocked!", // New toast message
                 upgradesMenuButtonText: "Upgrades",
                 settingsMenuButtonText: "Menu", // Changed from Settings to Menu
                 settingsTitle: "Settings",
@@ -878,7 +970,7 @@
             languageButtonElement.addEventListener('click', toggleLanguage); // Toggle language
 
             // Theme Toggle
-            themeToggleButtonElement.addEventListener('click', toggleTheme); // Toggle theme
+            themeToggleButtonElement.addEventListener('click', handleThemeToggleClick); // Use new handler for easter egg
 
             // Settings Side Menu
             openSettingsMenuButton.addEventListener('click', () => toggleSideMenu('settings', true));
@@ -1395,6 +1487,7 @@
                 achievements: achievements.map(a => ({ ...a })), // Deep copy achievements
                 currentLanguage,
                 currentTheme, // Save current theme
+                lastNormalTheme, // Save last normal theme
                 activeBonus: activeBonus ? { // Save active bonus state
                     id: activeBonus.id,
                     remainingTime: activeBonus.remainingTime,
@@ -1420,6 +1513,7 @@
                 upgradesPurchasedCount = gameState.upgradesPurchasedCount || 0;
                 currentLanguage = gameState.currentLanguage || 'fr';
                 currentTheme = gameState.currentTheme || 'dark'; // Load current theme, default to dark
+                lastNormalTheme = gameState.lastNormalTheme || 'dark'; // Load last normal theme
 
                 // Restore upgrades state
                 if (gameState.upgrades) {
@@ -1541,20 +1635,48 @@
         }
 
         /**
-         * Toggles the current theme between light and dark.
+         * Handles the theme toggle button click, including the easter egg logic.
          */
-        function toggleTheme() {
-            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+        function handleThemeToggleClick() {
+            const now = Date.now();
+            // Reset count if too much time has passed since last click
+            if (themeClickTimer && (now - themeClickTimer > 500)) {
+                themeClickCount = 0;
+            }
+            themeClickCount++;
+            themeClickTimer = now;
+
+            if (themeClickCount >= 5) {
+                // Easter egg activated!
+                currentTheme = 'neon';
+                showToast(translations[currentLanguage].toastNeonThemeUnlocked);
+                themeClickCount = 0; // Reset count
+                clearTimeout(themeClickTimer); // Clear timer
+                themeClickTimer = null;
+            } else {
+                // Normal theme toggle logic
+                if (currentTheme === 'light') {
+                    currentTheme = 'dark';
+                } else if (currentTheme === 'dark') {
+                    currentTheme = 'light';
+                } else { // If currentTheme is 'neon', switch back to last normal theme
+                    currentTheme = lastNormalTheme;
+                }
+            }
+            // Update lastNormalTheme only if we are switching to a normal theme
+            if (currentTheme !== 'neon') {
+                lastNormalTheme = currentTheme;
+            }
             applyTheme(currentTheme);
             saveGame(); // Save theme preference
         }
 
         /**
          * Applies the selected theme to the body.
-         * @param {string} theme - The theme name ('light' or 'dark').
+         * @param {string} theme - The theme name ('light', 'dark', or 'neon').
          */
         function applyTheme(theme) {
-            document.body.classList.remove('light-theme', 'dark-theme');
+            document.body.classList.remove('light-theme', 'dark-theme', 'neon-theme');
             document.body.classList.add(`${theme}-theme`);
             // Update the text of the theme button based on the current theme
             document.getElementById('themeButtonText').textContent = translations[currentLanguage].themeButton;
