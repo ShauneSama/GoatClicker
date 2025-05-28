@@ -11,20 +11,146 @@
             margin: 0;
             overflow: hidden;
             font-family: 'Inter', sans-serif;
-            background-color: #e0f2fe; /* Tailwind sky-100 */
             display: flex;
             flex-direction: column;
             height: 100vh;
+            transition: background-color 0.3s ease; /* Smooth transition for theme change */
         }
+
+        /* Light theme styles */
+        body.light-theme {
+            background-color: #e0f2fe; /* Tailwind sky-100 */
+            color: #1f2937; /* Default text color for light theme */
+        }
+        body.light-theme #gameArea {
+            background: linear-gradient(to bottom, #87CEEB 0%, #a7f3d0 70%, #6ee7b7 100%);
+        }
+        body.light-theme .ui-panel,
+        body.light-theme .side-menu,
+        body.light-theme .modal-content {
+            background-color: #ffffff;
+        }
+        body.light-theme .stat-card {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+        }
+        body.light-theme .achievement-item.unlocked {
+            background-color: #e0f2f7; /* Light blue for unlocked achievements in light theme */
+        }
+        body.light-theme .achievement-item.unlocked .achievement-icon {
+            border-color: #a7f3d0; /* Light green border for unlocked icons */
+            background-color: #d1fae5; /* Lighter green background for unlocked icons */
+        }
+        body.light-theme .toast-notification {
+            background-color: #10b981; /* Green for toast */
+            color: white;
+        }
+        body.light-theme .floating-text {
+            color: #10b981; /* Green for floating text */
+            text-shadow: 0px 0px 8px rgba(255,255,255,0.8);
+        }
+        body.light-theme .upgrade-effect-star {
+            color: #FFD700; /* Gold for star effect */
+            text-shadow: 0px 0px 8px rgba(255,255,255,0.8);
+        }
+        body.light-theme .cloud {
+            fill: white; /* White clouds in light theme */
+            opacity: 0.7;
+        }
+        body.light-theme .grass-foreground {
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='50' viewBox='0 0 100 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 50 Q 12.5 25, 25 50 T 50 50 T 75 50 T 100 50 L 100 50 L 0 50 Z' fill='%2334D399'/%3E%3Cpath d='M0 50 Q 10 30, 20 50 T 40 50 T 60 50 T 80 50 T 100 50 L 100 50 L 0 50 Z' fill='%2310B981' opacity='0.6'/%3E%3C/svg%3E");
+        }
+
+
+        /* Dark theme styles */
+        body.dark-theme {
+            background-color: #1a202c; /* Tailwind gray-900 */
+            color: #e2e8f0; /* Light text color for dark theme */
+        }
+        body.dark-theme #gameArea {
+            background: linear-gradient(to bottom, #2d3748 0%, #4a5568 70%, #2c5282 100%); /* Darker gradient */
+        }
+        body.dark-theme .ui-panel,
+        body.dark-theme .side-menu,
+        body.dark-theme .modal-content {
+            background-color: #2d3748; /* Darker background for panels */
+        }
+        body.dark-theme .stat-card {
+            background-color: #4a5568; /* Darker background for stat cards */
+            border: 1px solid #2d3748;
+        }
+        body.dark-theme .stat-card h3 {
+            color: #a0aec0; /* Lighter text for titles */
+        }
+        body.dark-theme .stat-card p {
+            color: #e2e8f0; /* Lighter text for numbers */
+        }
+        body.dark-theme .upgrade-button {
+            background-color: #4a5568; /* Darker background for upgrade buttons */
+            color: #e2e8f0;
+        }
+        body.dark-theme .upgrade-button:disabled {
+            background-color: #2d3748;
+            color: #a0aec0;
+        }
+        body.dark-theme .upgrade-button.bg-blue-500 {
+            background-color: #4299e1; /* Blue for available upgrades */
+        }
+        body.dark-theme .upgrade-button.bg-green-600 {
+            background-color: #38a169; /* Green for maxed upgrades */
+        }
+        body.dark-theme .achievement-item {
+            border-bottom-color: #4a5568; /* Darker separator */
+        }
+        body.dark-theme .achievement-item h4 {
+            color: #e2e8f0;
+        }
+        body.dark-theme .achievement-item p {
+            color: #a0aec0;
+        }
+        body.dark-theme .achievement-item.unlocked {
+            background-color: #2d3748; /* Darker background for unlocked achievements */
+        }
+        body.dark-theme .achievement-item.unlocked .achievement-details h4 {
+            color: #68d391; /* Lighter green for unlocked text */
+        }
+        body.dark-theme .achievement-item.unlocked .achievement-icon {
+            border-color: #38a169; /* Darker green border for unlocked icons */
+            background-color: #2f855a; /* Darker green background for unlocked icons */
+        }
+        body.dark-theme .modal-content h3,
+        body.dark-theme .modal-content p {
+            color: #e2e8f0;
+        }
+        body.dark-theme .toast-notification {
+            background-color: #38a169; /* Darker green for toast */
+            color: white;
+        }
+        body.dark-theme .floating-text {
+            color: #68d391; /* Lighter green for floating text */
+            text-shadow: 0px 0px 8px rgba(0,0,0,0.8);
+        }
+        body.dark-theme .upgrade-effect-star {
+            color: #f6e05e; /* Lighter gold for star effect */
+            text-shadow: 0px 0px 8px rgba(0,0,0,0.8);
+        }
+        body.dark-theme .cloud {
+            fill: #a0aec0; /* Grayish clouds in dark theme */
+            opacity: 0.5;
+        }
+        body.dark-theme .grass-foreground {
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='50' viewBox='0 0 100 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 50 Q 12.5 25, 25 50 T 50 50 T 75 50 T 100 50 L 100 50 L 0 50 Z' fill='%232F855A'/%3E%3Cpath d='M0 50 Q 10 30, 20 50 T 40 50 T 60 50 T 80 50 T 100 50 L 100 50 L 0 50 Z' fill='%231C4532' opacity='0.6'/%3E%3C/svg%3E");
+        }
+
+
         #gameArea {
             flex-grow: 1; /* Allows game area to take available space */
             display: flex;
             justify-content: center;
             align-items: center;
-            /* Gradient background for sky to green */
-            background: linear-gradient(to bottom, #87CEEB 0%, #a7f3d0 70%, #6ee7b7 100%);
             position: relative;
             overflow: hidden;
+            transition: background 0.3s ease; /* Smooth transition for theme change */
         }
 
         /* Decorative clouds styles */
@@ -32,9 +158,9 @@
             position: absolute;
             width: 100px; /* Base size, can vary */
             height: auto;
-            opacity: 0.7;
             pointer-events: none; /* Prevents interference with clicks */
             animation: floatCloud 20s linear infinite alternate; /* Animation for floating effect */
+            transition: fill 0.3s ease, opacity 0.3s ease; /* Smooth transition for theme change */
         }
         /* Specific cloud positioning and animation duration */
         .cloud1 { top: 10%; left: 15%; width: 120px; animation-duration: 25s; }
@@ -54,12 +180,11 @@
             left: 0;
             width: 100%;
             height: 50px; /* Height of the grass */
-            /* SVG pattern for grass texture */
-            background-image: url("data:image/svg+xml,%3Csvg width='100' height='50' viewBox='0 0 100 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 50 Q 12.5 25, 25 50 T 50 50 T 75 50 T 100 50 L 100 50 L 0 50 Z' fill='%2334D399'/%3E%3Cpath d='M0 50 Q 10 30, 20 50 T 40 50 T 60 50 T 80 50 T 100 50 L 100 50 L 0 50 Z' fill='%2310B981' opacity='0.6'/%3E%3C/svg%3E");
             background-size: 100px 50px; /* Size of the SVG pattern */
             background-repeat: repeat-x; /* Repeat horizontally */
             z-index: 10;
             pointer-events: none; /* Prevents interference with clicks */
+            transition: background-image 0.3s ease; /* Smooth transition for theme change */
         }
 
         /* Goat button styles */
@@ -122,7 +247,6 @@
         /* UI panel styles (bottom section) */
         .ui-panel {
             width: 100%;
-            background-color: #ffffff;
             padding: 16px;
             box-shadow: 0 -4px 15px rgba(0,0,0,0.1); /* Shadow at the top */
             border-top-left-radius: 16px;
@@ -130,15 +254,15 @@
             max-height: 50vh; /* Limits height on smaller screens */
             overflow-y: auto; /* Enables scrolling if content overflows */
             z-index: 100; /* Ensures it's above gameArea */
+            transition: background-color 0.3s ease; /* Smooth transition for theme change */
         }
         /* Stat card styles within the UI panel */
         .stat-card {
-            background-color: #f9fafb;
             padding: 12px 16px;
             border-radius: 10px;
             box-shadow: 0 3px 6px rgba(0,0,0,0.07);
             text-align: center;
-            border: 1px solid #e5e7eb;
+            transition: background-color 0.3s ease, border-color 0.3s ease; /* Smooth transition for theme change */
         }
         /* Upgrade button styles */
         .upgrade-button {
@@ -162,12 +286,11 @@
             position: absolute;
             font-size: 2rem;
             font-weight: 700;
-            color: #10b981; /* Green color */
             pointer-events: none; /* Prevents interaction */
             animation: floatUp2D 1.2s cubic-bezier(0.17, 0.84, 0.44, 1) forwards; /* Floating animation */
             opacity: 1;
-            text-shadow: 0px 0px 8px rgba(255,255,255,0.8); /* White glow */
             z-index: 100;
+            transition: color 0.3s ease, text-shadow 0.3s ease; /* Smooth transition for theme change */
         }
         /* Keyframe animation for floating text */
         @keyframes floatUp2D {
@@ -179,12 +302,11 @@
         .upgrade-effect-star {
             position: absolute;
             font-size: 2.5rem; /* Larger for visibility */
-            color: #FFD700; /* Gold color */
             pointer-events: none;
             animation: floatUpAndFade 0.8s ease-out forwards; /* Animation for floating star */
             opacity: 1;
-            text-shadow: 0px 0px 8px rgba(255,255,255,0.8);
             z-index: 100;
+            transition: color 0.3s ease, text-shadow 0.3s ease; /* Smooth transition for theme change */
         }
         /* Keyframe animation for floating star */
         @keyframes floatUpAndFade {
@@ -215,7 +337,6 @@
         }
         /* Modal content styles */
         .modal-content {
-            background-color: white;
             padding: 24px;
             border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.15);
@@ -224,7 +345,7 @@
             max-height: 80vh; /* Limits height */
             overflow-y: auto; /* Enables scrolling if content overflows */
             transform: scale(0.95); /* Initial scale for entry animation */
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease; /* Smooth transition for theme change */
         }
         /* Scale effect for modal content when active */
         .modal-overlay.active .modal-content {
@@ -236,6 +357,7 @@
             align-items: center;
             padding: 12px 0;
             border-bottom: 1px solid #e5e7eb; /* Separator */
+            transition: background-color 0.3s ease, border-color 0.3s ease; /* Smooth transition for theme change */
         }
         .achievement-item:last-child {
             border-bottom: none; /* No border for the last item */
@@ -245,14 +367,16 @@
             height: 40px;
             margin-right: 16px;
             flex-shrink: 0; /* Prevents icon from shrinking */
+            transition: border-color 0.3s ease, background-color 0.3s ease, filter 0.3s ease; /* Smooth transition for theme change */
         }
         .achievement-details h4 {
             font-weight: 600;
-            color: #1f2937;
+            transition: color 0.3s ease; /* Smooth transition for theme change */
         }
         .achievement-details p {
             font-size: 0.875rem;
             color: #4b5563;
+            transition: color 0.3s ease; /* Smooth transition for theme change */
         }
         /* Styles for unlocked achievements */
         .achievement-item.unlocked .achievement-details h4 {
@@ -272,14 +396,12 @@
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: #10b981; /* Green background */
-            color: white;
             padding: 12px 20px;
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             z-index: 2000;
             opacity: 0;
-            transition: opacity 0.5s ease, transform 0.5s ease; /* Smooth transitions for show/hide */
+            transition: opacity 0.5s ease, transform 0.5s ease, background-color 0.3s ease, color 0.3s ease; /* Smooth transitions for show/hide and theme change */
             font-size: 0.9rem;
         }
         /* Show state for toast notification */
@@ -312,9 +434,8 @@
             right: -300px; /* Hidden by default */
             width: 280px;
             height: 100%;
-            background-color: #ffffff;
             box-shadow: -4px 0 15px rgba(0,0,0,0.1);
-            transition: right 0.3s ease-in-out;
+            transition: right 0.3s ease-in-out, background-color 0.3s ease, color 0.3s ease; /* Smooth transition for theme change */
             z-index: 1000;
             padding: 1rem;
             overflow-y: auto;
@@ -342,7 +463,6 @@
         /* Upgrades Always-Visible Section */
         .upgrades-section {
             width: 100%;
-            background-color: #ffffff;
             box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
             border-top-left-radius: 16px;
             border-top-right-radius: 16px;
@@ -352,14 +472,15 @@
             max-height: 40vh; /* Adjust as needed for desired height */
             display: flex;
             flex-direction: column;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for theme change */
         }
 
         .upgrades-section-title {
             font-size: 1.25rem; /* text-xl */
             font-weight: 600; /* font-semibold */
-            color: #1f2937; /* text-gray-800 */
             margin-bottom: 1rem;
             text-align: center;
+            transition: color 0.3s ease; /* Smooth transition for theme change */
         }
 
         .upgrades-container-scroll {
@@ -369,7 +490,7 @@
         }
     </style>
 </head>
-<body class="bg-sky-100">
+<body class="dark-theme">
 
     <div id="gameArea">
         <div class="top-bar">
@@ -377,18 +498,18 @@
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-2">
                     <path fill-rule="evenodd" d="M11.086 3.004A3.003 3.003 0 008.914 3.004L3.004 8.914A3.003 3.003 0 003.004 11.086L8.914 16.996A3.003 3.003 0 0011.086 16.996L16.996 11.086A3.003 3.003 0 0016.996 8.914L11.086 3.004zM8.914 4.5l5.586 5.586-5.586 5.586-5.586-5.586L8.914 4.5zM10 10.5a.5.5 0 000-1 .5.5 0 000 1z" clip-rule="evenodd" />
                 </svg>
-                <span id="settingsMenuButtonText">Paramètres</span>
+                <span id="settingsMenuButtonText">Menu</span>
             </button>
         </div>
 
         <svg class="cloud cloud1" viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20 60 Q0 60 0 40 Q0 20 20 20 Q30 0 50 20 Q70 0 80 20 Q100 20 100 40 Q100 60 80 60 Z" fill="white"/>
+            <path d="M20 60 Q0 60 0 40 Q0 20 20 20 Q30 0 50 20 Q70 0 80 20 Q100 20 100 40 Q100 60 80 60 Z" />
         </svg>
         <svg class="cloud cloud2" viewBox="0 0 120 70" xmlns="http://www.w3.org/2000/svg">
-            <path d="M25 70 Q5 70 5 50 Q5 30 25 30 Q35 10 55 30 Q75 10 85 30 Q105 30 105 50 Q105 70 85 70 Z" fill="white"/>
+            <path d="M25 70 Q5 70 5 50 Q5 30 25 30 Q35 10 55 30 Q75 10 85 30 Q105 30 105 50 Q105 70 85 70 Z" />
         </svg>
          <svg class="cloud cloud3" viewBox="0 0 150 80" xmlns="http://www.w3.org/2000/svg">
-            <path d="M30 80 Q10 80 10 55 Q10 30 30 30 Q40 5 65 30 Q90 5 100 30 Q120 30 120 55 Q120 80 100 80Z" fill="white"/>
+            <path d="M30 80 Q10 80 10 55 Q10 30 30 30 Q40 5 65 30 Q90 5 100 30 Q120 30 120 55 Q120 80 100 80Z" />
         </svg>
 
         <button id="goatButton" title="Cliquez sur la chèvre !"></button>
@@ -440,6 +561,12 @@
                     <path fill-rule="evenodd" d="M10 2.5a.75.75 0 00-1.5 0v.75c0 .414.336.75.75.75h.75a.75.75 0 00.75-.75V2.5zM10 5.5a.75.75 0 00-1.5 0v.75c0 .414.336.75.75.75h.75a.75.75 0 00.75-.75V5.5zM10 8.5a.75.75 0 00-1.5 0v.75c0 .414.336.75.75.75h.75a.75.75 0 00.75-.75V8.5z" clip-rule="evenodd" />
                 </svg>
                 <span id="languageButtonText">Langue</span>
+            </button>
+            <button id="themeToggleButton" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-2">
+                    <path fill-rule="evenodd" d="M7.455 2.004a.75.75 0 01.26.75L6.5 10l1.204 4.325a.75.75 0 01-1.173.958l-2.5-2.25a.75.75 0 010-1.108l2.5-2.25a.75.75 0 01.913.143zm6.29 0a.75.75 0 01-.913-.143l-2.5-2.25a.75.75 0 010 1.108l2.5 2.25a.75.75 0 01-.26.75L13.5 10l-1.204 4.325a.75.75 0 011.173.958l2.5-2.25a.75.75 0 010-1.108l-2.5-2.25a.75.75 0 01-.913.143z" clip-rule="evenodd" />
+                </svg>
+                <span id="themeButtonText">Thème</span>
             </button>
             <button id="achievementsButton" class="bg-amber-400 hover:bg-amber-500 text-amber-900 font-semibold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-2">
@@ -498,6 +625,7 @@
         let totalClicks = 0; // Total clicks made by the player
         let upgradesPurchasedCount = 0; // Counter for total upgrades purchased
         let currentLanguage = 'fr'; // Default language
+        let currentTheme = 'dark'; // Default theme changed to dark
 
         // DOM element references
         const goatButtonElement = document.getElementById('goatButton');
@@ -511,6 +639,7 @@
         const resetConfirmModalElement = document.getElementById('resetConfirmModal');
         const cancelResetButtonElement = document.getElementById('cancelResetButton');
         const confirmResetButtonElement = document.getElementById('confirmResetButton');
+        const themeToggleButtonElement = document.getElementById('themeToggleButton'); // New theme button
 
         // Upgrades section references
         const upgradesSection = document.getElementById('upgradesSection');
@@ -528,6 +657,7 @@
                 title: "Goat Clicker 2D - Moderne V2",
                 achievementsButton: "Succès",
                 languageButton: "Langue",
+                themeButton: "Thème", // New translation
                 resetButton: "Réinitialiser",
                 goatsStatTitle: "Chèvres",
                 gpcStatTitle: "/ Clic",
@@ -545,7 +675,7 @@
                 toastGameSaved: "Partie sauvegardée !",
                 toastGameReset: "Partie réinitialisée !",
                 upgradesMenuButtonText: "Améliorations", // Kept for translation consistency, though button removed
-                settingsMenuButtonText: "Paramètres",
+                settingsMenuButtonText: "Menu", // Changed from Paramètres to Menu
                 settingsTitle: "Paramètres",
                 upgrades: {
                     meilleurPat_1: { name: "Pâturage Basique", description: "+1 chèvre/clic." },
@@ -569,6 +699,7 @@
                 title: "Goat Clicker 2D - Modern V2",
                 achievementsButton: "Achievements",
                 languageButton: "Language",
+                themeButton: "Theme", // New translation
                 resetButton: "Reset",
                 goatsStatTitle: "Goats",
                 gpcStatTitle: "/ Click",
@@ -586,7 +717,7 @@
                 toastGameSaved: "Game saved!",
                 toastGameReset: "Game reset!",
                 upgradesMenuButtonText: "Upgrades",
-                settingsMenuButtonText: "Settings",
+                settingsMenuButtonText: "Menu", // Changed from Settings to Menu
                 settingsTitle: "Settings",
                 upgrades: {
                     meilleurPat_1: { name: "Basic Pasture", description: "+1 goat/click." },
@@ -635,6 +766,7 @@
          */
         function init() {
             loadGame(); // Load game state from localStorage
+            applyTheme(currentTheme); // Apply initial theme
             applyLanguage(currentLanguage); // Apply initial language
             updateUI(); // Initial UI update
             renderUpgrades(); // Render upgrade buttons
@@ -655,6 +787,9 @@
 
             // Language Toggle
             languageButtonElement.addEventListener('click', toggleLanguage); // Toggle language
+
+            // Theme Toggle
+            themeToggleButtonElement.addEventListener('click', toggleTheme); // Toggle theme
 
             // Settings Side Menu
             openSettingsMenuButton.addEventListener('click', () => toggleSideMenu('settings', true));
@@ -959,7 +1094,7 @@
                 const item = document.createElement('div');
                 item.className = 'achievement-item py-3 px-1 transition-all duration-200 ease-in-out';
                 if (ach.unlocked) {
-                    item.classList.add('unlocked', 'bg-emerald-50', 'rounded-md'); // Styling for unlocked
+                    item.classList.add('unlocked', 'rounded-md'); // Styling for unlocked
                 } else {
                     item.classList.add('opacity-70'); // Styling for locked
                 }
@@ -1027,7 +1162,8 @@
                 upgradesPurchasedCount,
                 upgrades: upgrades.map(u => ({ ...u })), // Deep copy upgrades to save current state
                 achievements: achievements.map(a => ({ ...a })), // Deep copy achievements
-                currentLanguage
+                currentLanguage,
+                currentTheme // Save current theme
             };
             localStorage.setItem('goatClickerSave', JSON.stringify(gameState));
             showToast(translations[currentLanguage].toastGameSaved);
@@ -1046,6 +1182,7 @@
                 totalClicks = gameState.totalClicks || 0;
                 upgradesPurchasedCount = gameState.upgradesPurchasedCount || 0;
                 currentLanguage = gameState.currentLanguage || 'fr';
+                currentTheme = gameState.currentTheme || 'dark'; // Load current theme, default to dark
 
                 // Restore upgrades state
                 if (gameState.upgrades) {
@@ -1071,6 +1208,7 @@
                 renderUpgrades();
                 renderAchievements();
                 applyLanguage(currentLanguage); // Apply loaded language
+                applyTheme(currentTheme); // Apply loaded theme
             }
         }
 
@@ -1129,6 +1267,26 @@
         }
 
         /**
+         * Toggles the current theme between light and dark.
+         */
+        function toggleTheme() {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            applyTheme(currentTheme);
+            saveGame(); // Save theme preference
+        }
+
+        /**
+         * Applies the selected theme to the body.
+         * @param {string} theme - The theme name ('light' or 'dark').
+         */
+        function applyTheme(theme) {
+            document.body.classList.remove('light-theme', 'dark-theme');
+            document.body.classList.add(`${theme}-theme`);
+            // Update the text of the theme button based on the current theme
+            document.getElementById('themeButtonText').textContent = translations[currentLanguage].themeButton;
+        }
+
+        /**
          * Toggles the visibility of a side menu.
          * @param {string} menuType - 'settings'.
          * @param {boolean} show - True to show, false to hide.
@@ -1159,6 +1317,7 @@
             document.title = t.title;
             document.getElementById('achievementsButtonText').textContent = t.achievementsButton;
             document.getElementById('languageButtonText').textContent = t.languageButton;
+            document.getElementById('themeButtonText').textContent = t.themeButton; // Update theme button text
             document.getElementById('resetButtonText').textContent = t.resetButton;
             document.getElementById('goatsStatTitle').textContent = t.goatsStatTitle;
             document.getElementById('gpcStatTitle').textContent = t.gpcStatTitle;
