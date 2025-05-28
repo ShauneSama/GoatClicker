@@ -47,7 +47,7 @@
         }
         body.light-theme .floating-text {
             color: #10b981; /* Green for floating text */
-            text-shadow: 0px 0px 8px rgba(255,255,255,0.8);
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0px 0px 8px rgba(255,255,255,0.8);
         }
         body.light-theme .upgrade-effect-star {
             color: #FFD700; /* Gold for star effect */
@@ -125,7 +125,7 @@
         }
         body.dark-theme .floating-text {
             color: #68d391; /* Lighter green for floating text */
-            text-shadow: 0px 0px 8px rgba(0,0,0,0.8);
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0px 0px 8px rgba(0,0,0,0.8);
         }
         body.dark-theme .upgrade-effect-star {
             color: #f6e05e; /* Lighter gold for star effect */
@@ -210,7 +210,7 @@
         }
         body.neon-theme .floating-text {
             color: #00ffcc; /* Bright green-cyan */
-            text-shadow: 0px 0px 10px rgba(0,255,204,0.8);
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0px 0px 10px rgba(0,255,204,0.8);
         }
         body.neon-theme .upgrade-effect-star {
             color: #ff00ff; /* Magenta neon for star effect */
@@ -372,6 +372,8 @@
             opacity: 1;
             z-index: 100;
             transition: color 0.3s ease, text-shadow 0.3s ease; /* Smooth transition for theme change */
+            /* Black outline - applied to all themes */
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
         }
         /* Keyframe animation for floating text */
         @keyframes floatUp2D {
@@ -679,7 +681,7 @@
 
     <div id="settingsSideMenu" class="side-menu">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-xl font-semibold text-gray-800" id="settingsTitle">Paramètres</h3>
+            <h3 class="text-xl font-semibold text-gray-800" id="settingsTitle">Menu</h3>
             <button id="closeSettingsMenuButton" class="text-gray-500 hover:text-gray-700">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-6 h-6">
                     <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
@@ -699,6 +701,12 @@
                     <path fill-rule="evenodd" d="M7.455 2.004a.75.75 0 01.26.75L6.5 10l1.204 4.325a.75.75 0 01-1.173.958l-2.5-2.25a.75.75 0 010-1.108l2.5-2.25a.75.75 0 01.913.143zm6.29 0a.75.75 0 01-.913-.143l-2.5-2.25a.75.75 0 010 1.108l2.5 2.25a.75.75 0 01-.26.75L13.5 10l-1.204 4.325a.75.75 0 011.173.958l2.5-2.25a.75.75 0 010-1.108l-2.5-2.25a.75.75 0 01-.913.143z" clip-rule="evenodd" />
                 </svg>
                 <span id="themeButtonText">Thème</span>
+            </button>
+            <button id="discordButton" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 mr-2">
+                    <path d="M20.916 3.421c-.567-.24-1.21-.416-1.9-.508a.998.998 0 00-.71.063c-2.34 1.13-4.38 2.91-6.19 5.37-1.12-1.2-2.39-2.27-3.79-3.15-.49-.29-.98-.56-1.48-.82a.998.998 0 00-1.02.21c-.48.45-1.14.99-1.9 1.63-.6.5-1.18 1.05-1.74 1.64-1.39 1.48-2.52 3.12-3.32 4.9-.78 1.76-1.2 3.66-1.2 5.6C0 20.32 2.08 22 4.67 22h14.66c2.59 0 4.67-1.68 4.67-3.78 0-1.94-.42-3.84-1.2-5.6-.8-1.78-1.93-3.42-3.32-4.9zM7.27 15.35c-.9 0-1.63-.73-1.63-1.63s.73-1.63 1.63-1.63 1.63.73 1.63 1.63-.73 1.63-1.63 1.63zm9.46 0c-.9 0-1.63-.73-1.63-1.63s.73-1.63 1.63-1.63 1.63.73 1.63 1.63-.73 1.63-1.63 1.63zm-2.88-5.71c-.72-.34-1.52-.52-2.36-.52-.84 0-1.64.18-2.36.52-.39.18-.7.5-.7.89 0 .39.31.71.7.89.72.34 1.52.52 2.36.52.84 0 1.64-.18 2.36-.52.39-.18.7-.5.7-.89 0-.39-.31-.71-.7-.89z" />
+                </svg>
+                <span id="discordButtonText">Discord</span>
             </button>
             <button id="achievementsButton" class="bg-amber-400 hover:bg-amber-500 text-amber-900 font-semibold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-2">
@@ -784,6 +792,7 @@
         const cancelResetButtonElement = document.getElementById('cancelResetButton');
         const confirmResetButtonElement = document.getElementById('confirmResetButton');
         const themeToggleButtonElement = document.getElementById('themeToggleButton'); // New theme button
+        const discordButtonElement = document.getElementById('discordButton'); // New Discord button
         const gameAreaElement = document.getElementById('gameArea'); // Reference to game area for bonus spawning
         const activeBonusIndicator = document.getElementById('activeBonusIndicator'); // Active bonus UI
         const activeBonusIcon = document.getElementById('activeBonusIcon');
@@ -807,6 +816,7 @@
                 achievementsButton: "Succès",
                 languageButton: "Langue",
                 themeButton: "Thème", // New translation
+                discordButton: "Discord", // New translation
                 neonThemeButtonText: "Thème Néon", // New Neon theme translation
                 resetButton: "Réinitialiser",
                 goatsStatTitle: "Chèvres",
@@ -827,7 +837,7 @@
                 toastNeonThemeUnlocked: "✨ Thème Néon débloqué !", // New toast message
                 upgradesMenuButtonText: "Améliorations", // Kept for translation consistency, though button removed
                 settingsMenuButtonText: "Menu", // Changed from Paramètres to Menu
-                settingsTitle: "Paramètres",
+                settingsTitle: "Menu",
                 bonusClickBoost: "Boost Clic", // New bonus translation
                 bonusIncomeBoost: "Boost Revenu", // New bonus translation
                 upgrades: {
@@ -859,6 +869,7 @@
                 achievementsButton: "Achievements",
                 languageButton: "Language",
                 themeButton: "Theme", // New translation
+                discordButton: "Discord", // New translation
                 neonThemeButtonText: "Neon Theme", // New Neon theme translation
                 resetButton: "Reset",
                 goatsStatTitle: "Goats",
@@ -971,6 +982,9 @@
 
             // Theme Toggle
             themeToggleButtonElement.addEventListener('click', handleThemeToggleClick); // Use new handler for easter egg
+
+            // Discord Button
+            discordButtonElement.addEventListener('click', () => window.open('https://discord.gg/M26G9CdQEt', '_blank'));
 
             // Settings Side Menu
             openSettingsMenuButton.addEventListener('click', () => toggleSideMenu('settings', true));
@@ -1729,6 +1743,7 @@
             document.getElementById('achievementsButtonText').textContent = t.achievementsButton;
             document.getElementById('languageButtonText').textContent = t.languageButton;
             document.getElementById('themeButtonText').textContent = t.themeButton; // Update theme button text
+            document.getElementById('discordButtonText').textContent = t.discordButton; // Update Discord button text
             document.getElementById('resetButtonText').textContent = t.resetButton;
             document.getElementById('goatsStatTitle').textContent = t.goatsStatTitle;
             document.getElementById('gpcStatTitle').textContent = t.gpcStatTitle;
