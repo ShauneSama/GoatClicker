@@ -486,6 +486,56 @@
             overflow-y: auto; /* Enable scrolling for upgrades list */
             padding-right: 0.5rem; /* Space for scrollbar */
         }
+
+        /* Bonus styles */
+        .bonus-item {
+            position: absolute;
+            width: 60px; /* Size of the bonus icon */
+            height: 60px;
+            background-color: #fcd34d; /* Yellow background */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem; /* Icon size */
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            animation: floatUpDown 2s ease-in-out infinite alternate; /* Floating animation */
+            z-index: 30; /* Above goat, below UI panels */
+            transition: transform 0.1s ease-out;
+        }
+
+        .bonus-item:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes floatUpDown {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-15px); }
+        }
+
+        /* Active bonus indicator styles */
+        #activeBonusIndicator {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 1000;
+        }
+        #activeBonusIndicator.active {
+            opacity: 1;
+            visibility: visible;
+        }
     </style>
 </head>
 <body class="dark-theme">
@@ -614,6 +664,10 @@
     </div>
 
     <div id="toastContainer"></div>
+    <div id="activeBonusIndicator">
+        <span id="activeBonusIcon"></span>
+        <span id="activeBonusTimer"></span>
+    </div>
 
     <script type="module">
         // Game state variables
@@ -624,6 +678,10 @@
         let upgradesPurchasedCount = 0; // Counter for total upgrades purchased
         let currentLanguage = 'fr'; // Default language
         let currentTheme = 'dark'; // Default theme changed to dark
+
+        // Bonus variables
+        let activeBonus = null; // Stores the currently active bonus
+        let bonusTimerInterval = null; // Interval for updating bonus timer
 
         // DOM element references
         const goatButtonElement = document.getElementById('goatButton');
@@ -638,6 +696,11 @@
         const cancelResetButtonElement = document.getElementById('cancelResetButton');
         const confirmResetButtonElement = document.getElementById('confirmResetButton');
         const themeToggleButtonElement = document.getElementById('themeToggleButton'); // New theme button
+        const gameAreaElement = document.getElementById('gameArea'); // Reference to game area for bonus spawning
+        const activeBonusIndicator = document.getElementById('activeBonusIndicator'); // Active bonus UI
+        const activeBonusIcon = document.getElementById('activeBonusIcon');
+        const activeBonusTimer = document.getElementById('activeBonusTimer');
+
 
         // Upgrades section references
         const upgradesSection = document.getElementById('upgradesSection');
@@ -675,13 +738,18 @@
                 upgradesMenuButtonText: "Améliorations", // Kept for translation consistency, though button removed
                 settingsMenuButtonText: "Menu", // Changed from Paramètres to Menu
                 settingsTitle: "Paramètres",
+                bonusClickBoost: "Boost Clic", // New bonus translation
+                bonusIncomeBoost: "Boost Revenu", // New bonus translation
                 upgrades: {
                     meilleurPat_1: { name: "Pâturage Basique", description: "+1 chèvre/clic." },
                     meilleurPat_2: { name: "Pâturage Amélioré", description: "+5 chèvres/clic." },
                     bergerAuto_1: { name: "Jeune Berger", description: "+1 chèvre/sec." },
                     bergerAuto_2: { name: "Berger Expérimenté", description: "+10 chèvres/sec." },
                     superChevre_1: { name: "Chèvre Alpha", description: "+50 chèvres/clic." },
-                    superChevre_2: { name: "Troupeau Magique", description: "+100 chèvres/sec." }
+                    superChevre_2: { name: "Troupeau Magique", description: "+100 chèvres/sec." },
+                    superChevre_3: { name: "Chèvre Cosmique", description: "+250 chèvres/clic." }, // New upgrade
+                    bergerAuto_3: { name: "Maître Berger", description: "+500 chèvres/sec." }, // New upgrade
+                    fermeAutomatisée_1: { name: "Ferme Automatisée", description: "+100 GPC & +100 GPS." } // New upgrade
                 },
                 achievements: {
                     click_1: { name: "Premier Clic", description: "Vous avez cliqué sur la chèvre pour la première fois." },
@@ -717,13 +785,18 @@
                 upgradesMenuButtonText: "Upgrades",
                 settingsMenuButtonText: "Menu", // Changed from Settings to Menu
                 settingsTitle: "Settings",
+                bonusClickBoost: "Click Boost", // New bonus translation
+                bonusIncomeBoost: "Income Boost", // New bonus translation
                 upgrades: {
                     meilleurPat_1: { name: "Basic Pasture", description: "+1 goat/click." },
                     meilleurPat_2: { name: "Improved Pasture", description: "+5 goats/click." },
                     bergerAuto_1: { name: "Young Shepherd", description: "+1 goat/sec." },
                     bergerAuto_2: { name: "Experienced Shepherd", description: "+10 goats/sec." },
                     superChevre_1: { name: "Alpha Goat", description: "+50 goats/click." },
-                    superChevre_2: { name: "Magic Herd", description: "+100 goats/sec." }
+                    superChevre_2: { name: "Magic Herd", description: "+100 goats/sec." },
+                    superChevre_3: { name: "Cosmic Goat", description: "+250 goats/click." }, // New upgrade
+                    bergerAuto_3: { name: "Master Shepherd", description: "+500 goats/sec." }, // New upgrade
+                    fermeAutomatisée_1: { name: "Automated Farm", description: "+100 GPC & +100 GPS." } // New upgrade
                 },
                 achievements: {
                     click_1: { name: "First Click", description: "You clicked the goat for the first time." },
@@ -744,7 +817,10 @@
             { id: "bergerAuto_1", name: "Jeune Berger", cost: 50, type: "second", value: 1, purchased: 0, maxPurchases: 5, description: "+1 chèvre/sec.", icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 inline-block mr-1"><path d="M7 8a3 3 0 100-6 3 3 0 000 6zM14.5 9a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM7 10.75A2.75 2.75 0 107 16.25a2.75 2.75 0 000-5.5zM14.5 12.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" /></svg>` },
             { id: "bergerAuto_2", name: "Berger Expérimenté", cost: 500, type: "second", value: 10, purchased: 0, maxPurchases: 5, description: "+10 chèvres/sec.", icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 inline-block mr-1"><path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.25 1.25 0 00.41 1.457l6.163 4.504a1.25 1.25 0 001.442 0l6.163-4.504a1.25 1.25 0 00.41-1.457l-1.33-3.882a1.25 1.25 0 00-1.2-.913H4.795a1.25 1.25 0 00-1.2.913L2.265 14.493z" /></svg>` },
             { id: "superChevre_1", name: "Chèvre Alpha", cost: 1000, type: "click", value: 50, purchased: 0, maxPurchases: 3, description: "+50 chèvres/clic.", icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 inline-block mr-1"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.393c-.842.07-1.168 1.063-.54 1.631l3.675 3.18-1.103 4.633c-.205.86.711 1.528 1.445 1.125l4.224-2.656 4.224 2.656c.734.403 1.65-.265 1.445-1.125l-1.102-4.633 3.675-3.18c.628-.568.302-1.561-.54-1.631l-4.753-.393L10.868 2.884z" clip-rule="evenodd" /></svg>` },
-            { id: "superChevre_2", name: "Troupeau Magique", cost: 10000, type: "second", value: 100, purchased: 0, maxPurchases: 3, description: "+100 chèvres/sec.", icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 inline-block mr-1"><path d="M11.983 1.904a3.003 3.003 0 00-3.966 0L3.43 6.427a3.003 3.003 0 00-.918 2.099V15a3 3 0 003 3h9a3 3 0 003-3V8.526a3.003 3.003 0 00-.918-2.099L11.983 1.904zM10 4.5a.75.75 0 01.75.75v2a.75.75 0 01-1.5 0v-2a.75.75 0 01.75-.75zM8.75 8a.75.75 0 00-1.5 0v2.5a.75.75 0 001.5 0V8zm2.5 0a.75.75 0 00-1.5 0v2.5a.75.75 0 001.5 0V8z" /></svg>` }
+            { id: "superChevre_2", name: "Troupeau Magique", cost: 10000, type: "second", value: 100, purchased: 0, maxPurchases: 3, description: "+100 chèvres/sec.", icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 inline-block mr-1"><path d="M11.983 1.904a3.003 3.003 0 00-3.966 0L3.43 6.427a3.003 3.003 0 00-.918 2.099V15a3 3 0 003 3h9a3 3 0 003-3V8.526a3.003 3.003 0 00-.918-2.099L11.983 1.904zM10 4.5a.75.75 0 01.75.75v2a.75.75 0 01-1.5 0v-2a.75.75 0 01.75-.75zM8.75 8a.75.75 0 00-1.5 0v2.5a.75.75 0 001.5 0V8zm2.5 0a.75.75 0 00-1.5 0v2.5a.75.75 0 001.5 0V8z" /></svg>` },
+            { id: "superChevre_3", name: "Chèvre Cosmique", cost: 50000, type: "click", value: 250, purchased: 0, maxPurchases: 3, description: "+250 chèvres/clic.", icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 inline-block mr-1"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.393c-.842.07-1.168 1.063-.54 1.631l3.675 3.18-1.103 4.633c-.205.86.711 1.528 1.445 1.125l4.224-2.656 4.224 2.656c.734.403 1.65-.265 1.445-1.125l-1.102-4.633 3.675-3.18c.628-.568.302-1.561-.54-1.631l-4.753-.393L10.868 2.884z" clip-rule="evenodd" /></svg>` },
+            { id: "bergerAuto_3", name: "Maître Berger", cost: 100000, type: "second", value: 500, purchased: 0, maxPurchases: 3, description: "+500 chèvres/sec.", icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 inline-block mr-1"><path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.25 1.25 0 00.41 1.457l6.163 4.504a1.25 1.25 0 001.442 0l6.163-4.504a1.25 1.25 0 00.41-1.457l-1.33-3.882a1.25 1.25 0 00-1.2-.913H4.795a1.25 1.25 0 00-1.2.913L2.265 14.493z" /></svg>` },
+            { id: "fermeAutomatisée_1", name: "Ferme Automatisée", cost: 250000, type: "hybrid", value: { gpc: 100, gps: 100 }, purchased: 0, maxPurchases: 1, description: "+100 GPC & +100 GPS.", icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 inline-block mr-1"><path fill-rule="evenodd" d="M11.54 2.359a1.125 1.125 0 00-1.087 0L2.265 6.94a1.125 1.125 0 00-.63 1.087V16.5A1.125 1.125 0 002.75 17.625h14.5A1.125 1.125 0 0018.375 16.5V8.027a1.125 1.125 0 00-.63-1.087l-8.185-4.581zM15.75 9.75a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0V10.5a.75.75 0 01.75-.75zm-4.5 0a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0V10.5a.75.75 0 01.75-.75z" clip-rule="evenodd" /></svg>`}
         ];
 
         // Array defining game achievements
@@ -756,6 +832,12 @@
             { id: "upgrade_1", name: "Premier Achat", description: "Acheter votre première amélioration.", unlocked: false, condition: () => upgradesPurchasedCount >= 1, icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg>` },
             { id: "upgrade_all_tier1", name: "Bien Équipé", description: "Acheter toutes les améliorations de base (Pâturage Basique & Jeune Berger).", unlocked: false, condition: () => upgrades.find(u=>u.id==="meilleurPat_1").purchased > 0 && upgrades.find(u=>u.id==="bergerAuto_1").purchased > 0, icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068M15.75 21H8.25A2.25 2.25 0 016 18.75V5.25A2.25 2.25 0 018.25 3h7.5A2.25 2.25 0 0118 5.25v8.25A2.25 2.25 0 0115.75 21z" /></svg>`},
             { id: "gps_10", name: "Auto-Suffisant", description: "Atteindre 10 chèvres par seconde.", unlocked: false, condition: () => goatsPerSecond >= 10, icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M9.348 14.652a3.75 3.75 0 010-5.304m5.304 0a3.75 3.75 0 010 5.304m-7.425 2.122a6.75 6.75 0 010-9.546m9.546 0a6.75 6.75 0 010 9.546M5.106 18.894c-3.808-3.808-3.808-9.98 0-13.788m13.788 0c3.808 3.808 3.808 9.98 0 13.788M12 12h.008v.008H12V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>`}
+        ];
+
+        // Bonus types definition
+        const bonusTypes = [
+            { id: 'clickBoost', icon: '⚡', duration: 10, multiplier: 2, type: 'gpc' }, // Doubles GPC for 10 seconds
+            { id: 'incomeBoost', icon: '💰', duration: 10, multiplier: 2, type: 'gps' }  // Doubles GPS for 10 seconds
         ];
 
         /**
@@ -810,6 +892,8 @@
             setInterval(generateGoatsPerSecond, 1000);
             // Auto-save game every 10 seconds
             setInterval(saveGame, 10000);
+            // Start bonus spawning
+            setInterval(spawnBonus, 15000); // Try to spawn a bonus every 15 seconds
         }
 
         /**
@@ -962,6 +1046,9 @@
                     goatsPerClick += upgrade.value;
                 } else if (upgrade.type === "second") {
                     goatsPerSecond += upgrade.value;
+                } else if (upgrade.type === "hybrid") { // Handle hybrid upgrades
+                    goatsPerClick += upgrade.value.gpc;
+                    goatsPerSecond += upgrade.value.gps;
                 }
 
                 // Increase next purchase cost (exponentially)
@@ -973,6 +1060,143 @@
                 showUpgradeEffect(); // Show visual effect for upgrade purchase
                 saveGame(); // Save game after purchase
             }
+        }
+
+        /**
+         * Spawns a random bonus item in the game area.
+         */
+        function spawnBonus() {
+            // Only spawn if no bonus is currently active
+            if (activeBonus) return;
+
+            // Randomly decide if a bonus should spawn (e.g., 50% chance)
+            if (Math.random() < 0.5) return;
+
+            const bonusType = bonusTypes[Math.floor(Math.random() * bonusTypes.length)];
+            const bonusElement = document.createElement('div');
+            bonusElement.className = 'bonus-item';
+            bonusElement.innerHTML = bonusType.icon;
+            bonusElement.dataset.bonusId = bonusType.id; // Store bonus ID for later use
+
+            // Random position within game area, avoiding being too close to edges or goat
+            const gameAreaRect = gameAreaElement.getBoundingClientRect();
+            const goatRect = goatButtonElement.getBoundingClientRect();
+
+            let randomX, randomY;
+            const padding = 80; // Padding from edges and goat
+
+            // Try to find a position that doesn't overlap with the goat
+            let attempts = 0;
+            do {
+                randomX = Math.random() * (gameAreaRect.width - padding * 2) + padding;
+                randomY = Math.random() * (gameAreaRect.height - padding * 2) + padding;
+                attempts++;
+            } while (
+                attempts < 100 && // Limit attempts to prevent infinite loops
+                randomX > (goatRect.left - gameAreaRect.left - 60) && randomX < (goatRect.right - gameAreaRect.left + 60) &&
+                randomY > (goatRect.top - gameAreaRect.top - 60) && randomY < (goatRect.bottom - gameAreaRect.top + 60)
+            );
+
+            bonusElement.style.left = `${randomX}px`;
+            bonusElement.style.top = `${randomY}px`;
+
+            gameAreaElement.appendChild(bonusElement);
+
+            // Remove bonus if not clicked after a certain time (e.g., 8 seconds)
+            const bonusTimeout = setTimeout(() => {
+                if (bonusElement.parentNode) {
+                    bonusElement.parentNode.removeChild(bonusElement);
+                }
+            }, 8000);
+
+            // Add click listener to activate bonus
+            bonusElement.addEventListener('click', () => activateBonus(bonusType, bonusElement, bonusTimeout));
+        }
+
+        /**
+         * Activates a bonus effect.
+         * @param {object} bonusType - The bonus type object.
+         * @param {HTMLElement} bonusElement - The clicked bonus element.
+         * @param {number} timeoutId - The ID of the setTimeout that would remove the bonus.
+         */
+        function activateBonus(bonusType, bonusElement, timeoutId) {
+            // Clear the timeout that would remove the bonus if it's clicked
+            clearTimeout(timeoutId);
+            if (bonusElement.parentNode) {
+                bonusElement.parentNode.removeChild(bonusElement);
+            }
+
+            // If a bonus is already active, end it prematurely
+            if (activeBonus) {
+                deactivateBonus(activeBonus);
+            }
+
+            activeBonus = {
+                ...bonusType,
+                remainingTime: bonusType.duration,
+                originalGPC: goatsPerClick,
+                originalGPS: goatsPerSecond
+            };
+
+            // Apply bonus effect
+            if (activeBonus.type === 'gpc') {
+                goatsPerClick *= activeBonus.multiplier;
+            } else if (activeBonus.type === 'gps') {
+                goatsPerSecond *= activeBonus.multiplier;
+            }
+            updateUI();
+            showToast(`${translations[currentLanguage][`bonus${bonusType.id.charAt(0).toUpperCase() + bonusType.id.slice(1)}`]} activé !`);
+            updateActiveBonusIndicator(); // Show indicator immediately
+
+            // Start countdown for the bonus
+            bonusTimerInterval = setInterval(() => {
+                activeBonus.remainingTime--;
+                if (activeBonus.remainingTime <= 0) {
+                    deactivateBonus(activeBonus);
+                } else {
+                    updateActiveBonusIndicator();
+                }
+            }, 1000);
+        }
+
+        /**
+         * Deactivates a bonus effect and resets stats.
+         * @param {object} bonus - The bonus object to deactivate.
+         */
+        function deactivateBonus(bonus) {
+            clearInterval(bonusTimerInterval); // Stop the timer
+            bonusTimerInterval = null;
+
+            // Revert bonus effect
+            if (bonus.type === 'gpc') {
+                goatsPerClick = bonus.originalGPC;
+            } else if (bonus.type === 'gps') {
+                goatsPerSecond = bonus.originalGPS;
+            }
+            activeBonus = null; // Clear active bonus
+            updateUI();
+            hideActiveBonusIndicator();
+            showToast(`${translations[currentLanguage][`bonus${bonus.id.charAt(0).toUpperCase() + bonus.id.slice(1)}`]} terminé.`);
+        }
+
+        /**
+         * Updates the active bonus indicator UI.
+         */
+        function updateActiveBonusIndicator() {
+            if (activeBonus) {
+                activeBonusIndicator.classList.add('active');
+                activeBonusIcon.textContent = activeBonus.icon;
+                activeBonusTimer.textContent = `${activeBonus.remainingTime}s`;
+            } else {
+                hideActiveBonusIndicator();
+            }
+        }
+
+        /**
+         * Hides the active bonus indicator UI.
+         */
+        function hideActiveBonusIndicator() {
+            activeBonusIndicator.classList.remove('active');
         }
 
         /**
@@ -1161,7 +1385,13 @@
                 upgrades: upgrades.map(u => ({ ...u })), // Deep copy upgrades to save current state
                 achievements: achievements.map(a => ({ ...a })), // Deep copy achievements
                 currentLanguage,
-                currentTheme // Save current theme
+                currentTheme, // Save current theme
+                activeBonus: activeBonus ? { // Save active bonus state
+                    id: activeBonus.id,
+                    remainingTime: activeBonus.remainingTime,
+                    originalGPC: activeBonus.originalGPC,
+                    originalGPS: activeBonus.originalGPS
+                } : null
             };
             localStorage.setItem('goatClickerSave', JSON.stringify(gameState));
             showToast(translations[currentLanguage].toastGameSaved);
@@ -1202,6 +1432,36 @@
                         }
                     });
                 }
+
+                // Restore active bonus state
+                if (gameState.activeBonus) {
+                    const bonusDef = bonusTypes.find(b => b.id === gameState.activeBonus.id);
+                    if (bonusDef) {
+                        activeBonus = {
+                            ...bonusDef,
+                            remainingTime: gameState.activeBonus.remainingTime,
+                            originalGPC: gameState.activeBonus.originalGPC,
+                            originalGPS: gameState.activeBonus.originalGPS
+                        };
+                        // Re-apply bonus effect (since goatsPerClick/Second might have been reset by default values)
+                        if (activeBonus.type === 'gpc') {
+                            goatsPerClick = activeBonus.originalGPC * activeBonus.multiplier;
+                        } else if (activeBonus.type === 'gps') {
+                            goatsPerSecond = activeBonus.originalGPS * activeBonus.multiplier;
+                        }
+                        updateActiveBonusIndicator();
+                        // Restart bonus timer
+                        bonusTimerInterval = setInterval(() => {
+                            activeBonus.remainingTime--;
+                            if (activeBonus.remainingTime <= 0) {
+                                deactivateBonus(activeBonus);
+                            } else {
+                                updateActiveBonusIndicator();
+                            }
+                        }, 1000);
+                    }
+                }
+
                 updateUI();
                 renderUpgrades();
                 renderAchievements();
@@ -1221,23 +1481,30 @@
             upgradesPurchasedCount = 0;
 
             // Reset upgrades to initial state
+            // Re-initialize costs based on their original values (assuming a fresh copy)
             upgrades.forEach(upgrade => {
                 upgrade.purchased = 0;
-                // Re-initialize costs based on their original values (assuming a fresh copy)
-                // For this, we need to re-define the initial upgrades array or store initial costs.
-                // For simplicity, let's hardcode initial costs here for reset.
+                // Reset costs to their initial values
                 if (upgrade.id === "meilleurPat_1") upgrade.cost = 10;
                 else if (upgrade.id === "meilleurPat_2") upgrade.cost = 100;
                 else if (upgrade.id === "bergerAuto_1") upgrade.cost = 50;
                 else if (upgrade.id === "bergerAuto_2") upgrade.cost = 500;
                 else if (upgrade.id === "superChevre_1") upgrade.cost = 1000;
                 else if (upgrade.id === "superChevre_2") upgrade.cost = 10000;
+                else if (upgrade.id === "superChevre_3") upgrade.cost = 50000;
+                else if (upgrade.id === "bergerAuto_3") upgrade.cost = 100000;
+                else if (upgrade.id === "fermeAutomatisée_1") upgrade.cost = 250000;
             });
 
             // Reset achievements to locked state
             achievements.forEach(ach => {
                 ach.unlocked = false;
             });
+
+            // Deactivate any active bonus
+            if (activeBonus) {
+                deactivateBonus(activeBonus);
+            }
 
             localStorage.removeItem('goatClickerSave'); // Clear saved game
             updateUI();
