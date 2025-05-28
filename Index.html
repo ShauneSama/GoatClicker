@@ -67,7 +67,7 @@
             width: 200px; /* Increased width for better visibility */
             height: 200px; /* Increased height for better visibility */
             /* SVG image of a goat from svgrepo.com */
-            background-image: url('https://www.svgrepo.com/show/508751/goat.svg');
+            background-image: url('https://png.pngtree.com/png-vector/20241002/ourmid/pngtree-cartoon-goat-png-image_13997136.png');
             background-color: rgba(255,255,255,0.8); /* More opaque background to highlight the goat */
             background-size: 160px 160px; /* Adjust goat image size to fit new button dimensions */
             background-repeat: no-repeat;
@@ -293,19 +293,19 @@
             transform: translateX(-50%) translateY(20px);
         }
 
-        /* Top bar for settings and upgrades */
+        /* Top bar for settings and achievements */
         .top-bar {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end; /* Align to right */
             padding: 1rem;
             z-index: 50;
         }
 
-        /* Side menu styles */
+        /* Side menu styles (for settings) */
         .side-menu {
             position: fixed;
             top: 0;
@@ -338,19 +338,41 @@
             opacity: 1;
             visibility: visible;
         }
+
+        /* Upgrades Always-Visible Section */
+        .upgrades-section {
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            z-index: 90; /* Below UI panel, above game area */
+            padding: 1rem;
+            overflow-y: auto; /* Enable scrolling */
+            max-height: 40vh; /* Adjust as needed for desired height */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .upgrades-section-title {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; /* font-semibold */
+            color: #1f2937; /* text-gray-800 */
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .upgrades-container-scroll {
+            flex-grow: 1; /* Allow container to take available height */
+            overflow-y: auto; /* Enable scrolling for upgrades list */
+            padding-right: 0.5rem; /* Space for scrollbar */
+        }
     </style>
 </head>
 <body class="bg-sky-100">
 
     <div id="gameArea">
         <div class="top-bar">
-            <button id="openUpgradesMenuButton" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-2">
-                    <path fill-rule="evenodd" d="M11.086 3.004A3.003 3.003 0 008.914 3.004L3.004 8.914A3.003 3.003 0 003.004 11.086L8.914 16.996A3.003 3.003 0 0011.086 16.996L16.996 11.086A3.003 3.003 0 0016.996 8.914L11.086 3.004zM8.914 4.5l5.586 5.586-5.586 5.586-5.586-5.586L8.914 4.5zM10 10.5a.5.5 0 000-1 .5.5 0 000 1z" clip-rule="evenodd" />
-                </svg>
-                <span id="upgradesMenuButtonText">Améliorations</span>
-            </button>
-
             <button id="openSettingsMenuButton" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-2">
                     <path fill-rule="evenodd" d="M11.086 3.004A3.003 3.003 0 008.914 3.004L3.004 8.914A3.003 3.003 0 003.004 11.086L8.914 16.996A3.003 3.003 0 0011.086 16.996L16.996 11.086A3.003 3.003 0 0016.996 8.914L11.086 3.004zM8.914 4.5l5.586 5.586-5.586 5.586-5.586-5.586L8.914 4.5zM10 10.5a.5.5 0 000-1 .5.5 0 000 1z" clip-rule="evenodd" />
@@ -396,19 +418,11 @@
         </div>
     </div>
 
-    <div id="upgradesSideMenu" class="side-menu">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-xl font-semibold text-gray-800" id="upgradesTitle">Améliorations</h3>
-            <button id="closeUpgradesMenuButton" class="text-gray-500 hover:text-gray-700">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-6 h-6">
-                    <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
-                </svg>
-            </button>
-        </div>
-        <div class="grid grid-cols-1 gap-3" id="upgradesContainer">
+    <div id="upgradesSection" class="upgrades-section">
+        <h3 class="upgrades-section-title" id="upgradesTitle">Améliorations</h3>
+        <div id="upgradesContainer" class="upgrades-container-scroll grid grid-cols-1 gap-3">
             </div>
     </div>
-    <div id="upgradesSideMenuOverlay" class="side-menu-overlay"></div>
 
     <div id="settingsSideMenu" class="side-menu">
         <div class="flex justify-between items-center mb-4">
@@ -498,12 +512,11 @@
         const cancelResetButtonElement = document.getElementById('cancelResetButton');
         const confirmResetButtonElement = document.getElementById('confirmResetButton');
 
-        // New menu elements
-        const openUpgradesMenuButton = document.getElementById('openUpgradesMenuButton');
-        const upgradesSideMenu = document.getElementById('upgradesSideMenu');
-        const closeUpgradesMenuButton = document.getElementById('closeUpgradesMenuButton');
-        const upgradesSideMenuOverlay = document.getElementById('upgradesSideMenuOverlay');
+        // Upgrades section references
+        const upgradesSection = document.getElementById('upgradesSection');
+        const upgradesContainer = document.getElementById('upgradesContainer'); // This already exists
 
+        // Settings side menu references
         const openSettingsMenuButton = document.getElementById('openSettingsMenuButton');
         const settingsSideMenu = document.getElementById('settingsSideMenu');
         const closeSettingsMenuButton = document.getElementById('closeSettingsMenuButton');
@@ -531,7 +544,7 @@
                 toastAchievementUnlocked: "🏆 Succès débloqué : ",
                 toastGameSaved: "Partie sauvegardée !",
                 toastGameReset: "Partie réinitialisée !",
-                upgradesMenuButtonText: "Améliorations",
+                upgradesMenuButtonText: "Améliorations", // Kept for translation consistency, though button removed
                 settingsMenuButtonText: "Paramètres",
                 settingsTitle: "Paramètres",
                 upgrades: {
@@ -631,7 +644,7 @@
             // Event Listeners
             goatButtonElement.addEventListener('click', onClickGoat); // Main click button
             
-            // Achievements Modal (still a modal, not side menu)
+            // Achievements Modal (still a modal)
             achievementsButtonElement.addEventListener('click', toggleAchievementsModal); // Open achievements modal
             closeAchievementsModalButtonElement.addEventListener('click', toggleAchievementsModal); // Close achievements modal
 
@@ -643,12 +656,7 @@
             // Language Toggle
             languageButtonElement.addEventListener('click', toggleLanguage); // Toggle language
 
-            // New: Upgrades Side Menu
-            openUpgradesMenuButton.addEventListener('click', () => toggleSideMenu('upgrades', true));
-            closeUpgradesMenuButton.addEventListener('click', () => toggleSideMenu('upgrades', false));
-            upgradesSideMenuOverlay.addEventListener('click', () => toggleSideMenu('upgrades', false));
-
-            // New: Settings Side Menu
+            // Settings Side Menu
             openSettingsMenuButton.addEventListener('click', () => toggleSideMenu('settings', true));
             closeSettingsMenuButton.addEventListener('click', () => toggleSideMenu('settings', false));
             settingsSideMenuOverlay.addEventListener('click', () => toggleSideMenu('settings', false));
@@ -1122,18 +1130,14 @@
 
         /**
          * Toggles the visibility of a side menu.
-         * @param {string} menuType - 'upgrades' or 'settings'.
+         * @param {string} menuType - 'settings'.
          * @param {boolean} show - True to show, false to hide.
          */
         function toggleSideMenu(menuType, show) {
             let menuElement;
             let overlayElement;
 
-            if (menuType === 'upgrades') {
-                menuElement = upgradesSideMenu;
-                overlayElement = upgradesSideMenuOverlay;
-                if (show) renderUpgrades(); // Re-render upgrades when opening the menu
-            } else if (menuType === 'settings') {
+            if (menuType === 'settings') {
                 menuElement = settingsSideMenu;
                 overlayElement = settingsSideMenuOverlay;
             }
@@ -1160,13 +1164,13 @@
             document.getElementById('gpcStatTitle').textContent = t.gpcStatTitle;
             document.getElementById('gpsStatTitle').textContent = t.gpsStatTitle;
             document.getElementById('clicksStatTitle').textContent = t.clicksStatTitle;
-            document.getElementById('upgradesTitle').textContent = t.upgradesTitle;
+            document.getElementById('upgradesTitle').textContent = t.upgradesTitle; // Now used for the always-visible section title
             document.getElementById('achievementsModalTitle').textContent = t.achievementsModalTitle;
             document.getElementById('resetConfirmTitle').textContent = t.resetConfirmTitle;
             document.getElementById('resetConfirmMessage').textContent = t.resetConfirmMessage;
             document.getElementById('cancelResetButtonText').textContent = t.cancelButton;
             document.getElementById('confirmResetButtonText').textContent = t.confirmButton;
-            document.getElementById('upgradesMenuButtonText').textContent = t.upgradesMenuButtonText;
+            // document.getElementById('upgradesMenuButtonText').textContent = t.upgradesMenuButtonText; // Removed button
             document.getElementById('settingsMenuButtonText').textContent = t.settingsMenuButtonText;
             document.getElementById('settingsTitle').textContent = t.settingsTitle;
 
