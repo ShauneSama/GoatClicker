@@ -709,8 +709,14 @@
 
     <div id="upgradesSection" class="upgrades-section">
         <h3 class="upgrades-section-title" id="upgradesTitle">Améliorations</h3>
-        <div id="upgradesContainer" class="upgrades-container-scroll grid grid-cols-1 gap-3">
+        <div class="upgrades-container-scroll grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div id="upgradesClickColumn" class="flex flex-col gap-3">
+                <h4 class="text-lg font-semibold text-center mt-2 mb-1">Par Clic</h4>
             </div>
+            <div id="upgradesSecondColumn" class="flex flex-col gap-3">
+                <h4 class="text-lg font-semibold text-center mt-2 mb-1">Par Seconde</h4>
+            </div>
+        </div>
     </div>
 
     <div id="settingsSideMenu" class="side-menu">
@@ -861,7 +867,9 @@
 
         // Upgrades section references
         const upgradesSection = document.getElementById('upgradesSection');
-        const upgradesContainer = document.getElementById('upgradesContainer'); // This already exists
+        const upgradesClickColumn = document.getElementById('upgradesClickColumn'); // New reference for click upgrades column
+        const upgradesSecondColumn = document.getElementById('upgradesSecondColumn'); // New reference for second upgrades column
+
 
         // Translations object
         const translations = {
@@ -1539,10 +1547,16 @@
          * Renders (or re-renders) all upgrade buttons in the UI.
          */
         function renderUpgrades() {
-            const container = document.getElementById('upgradesContainer');
-            container.innerHTML = ''; // Clear existing buttons
+            // Clear existing buttons from both columns
+            upgradesClickColumn.innerHTML = '<h4 class="text-lg font-semibold text-center mt-2 mb-1">Par Clic</h4>';
+            upgradesSecondColumn.innerHTML = '<h4 class="text-lg font-semibold text-center mt-2 mb-1">Par Seconde</h4>';
 
-            upgrades.forEach(upgrade => {
+            // Separate upgrades by type
+            const clickUpgrades = upgrades.filter(u => u.type === 'click' || u.type === 'hybrid');
+            const secondUpgrades = upgrades.filter(u => u.type === 'second' || u.type === 'hybrid');
+
+            // Render click upgrades
+            clickUpgrades.forEach(upgrade => {
                 const button = document.createElement('button');
                 button.id = `upgrade-${upgrade.id}`;
                 button.className = `upgrade-button w-full text-left p-3 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400`;
@@ -1550,7 +1564,6 @@
                 const maxedOut = upgrade.maxPurchases !== undefined && upgrade.purchased >= upgrade.maxPurchases;
                 const translatedUpgrade = translations[currentLanguage].upgrades[upgrade.id];
 
-                // Determine the purchased display text
                 let purchasedDisplayText;
                 if (upgrade.maxPurchases !== undefined && upgrade.maxPurchases !== Infinity) {
                     purchasedDisplayText = `${upgrade.purchased}/${upgrade.maxPurchases}`;
@@ -1558,7 +1571,6 @@
                     purchasedDisplayText = `${upgrade.purchased}`;
                 }
 
-                // Populate button content with upgrade details
                 button.innerHTML = `
                     <div class="flex justify-between items-center mb-1">
                         <span class="font-semibold text-sm flex items-center"> ${upgrade.icon || ''} ${translatedUpgrade.name}</span>
@@ -1571,8 +1583,40 @@
                         ${translations[currentLanguage].upgradeCost}: <span class="upgrade-cost font-bold">${maxedOut ? translations[currentLanguage].upgradeMax : formatNumber(upgrade.cost)}</span> ch.
                     </div>
                 `;
-                button.onclick = () => buyUpgrade(upgrade.id); // Attach click handler
-                container.appendChild(button);
+                button.onclick = () => buyUpgrade(upgrade.id);
+                upgradesClickColumn.appendChild(button);
+            });
+
+            // Render second upgrades
+            secondUpgrades.forEach(upgrade => {
+                const button = document.createElement('button');
+                button.id = `upgrade-${upgrade.id}`;
+                button.className = `upgrade-button w-full text-left p-3 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400`;
+
+                const maxedOut = upgrade.maxPurchases !== undefined && upgrade.purchased >= upgrade.maxPurchases;
+                const translatedUpgrade = translations[currentLanguage].upgrades[upgrade.id];
+
+                let purchasedDisplayText;
+                if (upgrade.maxPurchases !== undefined && upgrade.maxPurchases !== Infinity) {
+                    purchasedDisplayText = `${upgrade.purchased}/${upgrade.maxPurchases}`;
+                } else {
+                    purchasedDisplayText = `${upgrade.purchased}`;
+                }
+
+                button.innerHTML = `
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-semibold text-sm flex items-center"> ${upgrade.icon || ''} ${translatedUpgrade.name}</span>
+                        <span class="text-xs px-2 py-0.5 rounded-full ${maxedOut ? 'bg-green-200 text-green-800' : 'bg-blue-200 text-blue-800'} upgrade-purchased">
+                            ${purchasedDisplayText}
+                        </span>
+                    </div>
+                    <p class="text-xs opacity-80 mb-1.5 ml-1">${translatedUpgrade.description}</p>
+                    <div class="text-xs sm:text-sm font-medium ml-1">
+                        ${translations[currentLanguage].upgradeCost}: <span class="upgrade-cost font-bold">${maxedOut ? translations[currentLanguage].upgradeMax : formatNumber(upgrade.cost)}</span> ch.
+                    </div>
+                `;
+                button.onclick = () => buyUpgrade(upgrade.id);
+                upgradesSecondColumn.appendChild(button);
             });
             updateUI(); // Call updateUI to set initial button states
         }
